@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
+import '../widget/bottomNavigation.dart';
 import 'api_sample.dart';
 
 class TopPage extends StatefulWidget {
@@ -36,6 +37,7 @@ class _TopPageState extends State<TopPage> {
           ],
         ),
       ),
+      bottomNavigationBar:BottomNavi(onTap:(int val){}),
     );
   }
 

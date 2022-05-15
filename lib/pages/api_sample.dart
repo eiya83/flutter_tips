@@ -1,5 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tips/models/pokemon.dart';
+import 'package:provider/provider.dart';
+import '../notifier/poke_notifier.dart';
+import '../widget/bottomNavigation.dart';
+import '../widget/pokemon_list_item.dart';
 
 class ApiSamplePage extends StatefulWidget {
   const ApiSamplePage({Key? key}) : super(key: key);
@@ -9,6 +13,8 @@ class ApiSamplePage extends StatefulWidget {
 }
 
 class _ApiSamplePageState extends State<ApiSamplePage> {
+
+  int currentbnb = 0;
 
   @override
   void initState() {
@@ -21,48 +27,46 @@ class _ApiSamplePageState extends State<ApiSamplePage> {
       appBar: AppBar(
         title: const Text('api sample'),
       ),
-      body: ListView.builder(
-          itemCount: 10,
-          itemBuilder: (context, index) => PokeListItem(index:index)
+      body: SafeArea(
+        child: currentbnb == 0 ? const PokeList() : const Settings(),
       ),
+      bottomNavigationBar: BottomNavi(onTap: (index) {
+        setState(() => currentbnb = index);
+      }),
     );
   }
 }
 
-class PokeListItem extends StatelessWidget {
-  const PokeListItem({Key? key, required this.index}) : super(key: key);
-  final int index;
+// tips:メインのリストVIEW
+class PokeList extends StatelessWidget {
+  const PokeList({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-        width: 80,
-        decoration: BoxDecoration(
-          color: Colors.yellow.withOpacity(.5),
-          borderRadius: BorderRadius.circular(10),
-          image: const DecorationImage(
-            fit: BoxFit.fitWidth,
-            image: NetworkImage(
-              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
-            ),
-          ),
+    return Consumer<PokemonsNotifier>(
+      builder: (context, pokes, child) => ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+          itemCount: 9,
+          itemBuilder: (context, index) {
+            return PokeListItem(
+              poke: pokes.byId( index + 1 ),
+            );
+          }),
+    );
+  }
+}
+
+// tips:setting
+class Settings extends StatelessWidget {
+  const Settings({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: const [
+        ListTile(
+          leading: Icon(Icons.lightbulb),
+          title: Text('Dark/Light Mode'),
         ),
-      ),
-      title: const Text(
-        'Pikachu',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-      subtitle: const Text(
-        '⚡️electric',
-      ),
-      trailing: const Icon(Icons.navigate_next),
-      onTap: () => {
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (BuildContext context) => const PokeDetail(),
-        //   ),
-        // ),
-      },
+      ],
     );
   }
 }
